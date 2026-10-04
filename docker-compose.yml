@@ -1,26 +1,21 @@
-version: '3.8'
-
 services:
-  db-postgres:
+  db:
     image: postgres:15-alpine
-    container_name: citas-db
-    env_file: .env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: citas_db
     ports:
       - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    restart: unless-stopped
 
-  app-citas:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: citas-app
+  backend:
+    build: ./backend
     ports:
-      - "8000:8000"
-    env_file: .env
+      - "8080:8080"
     depends_on:
-      - db-postgres
+      - db
 
-volumes:
-  pgdata:
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
